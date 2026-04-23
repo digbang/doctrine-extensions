@@ -3,7 +3,7 @@ namespace Digbang\DoctrineExtensions\Functions\Postgresql;
 
 use Doctrine\ORM\Query\AST\Functions\FunctionNode;
 use Doctrine\ORM\Query\AST\Node;
-use Doctrine\ORM\Query\Lexer;
+use Doctrine\ORM\Query\TokenType;
 use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\Query\SqlWalker;
 
@@ -19,7 +19,7 @@ class JsonbBuildObjectFunction extends FunctionNode
      *
      * @return string
      */
-    public function getSql(SqlWalker $sqlWalker)
+    public function getSql(SqlWalker $sqlWalker): string
     {
         $args = [];
 
@@ -35,24 +35,24 @@ class JsonbBuildObjectFunction extends FunctionNode
      *
      * @return void
      */
-    public function parse(Parser $parser)
+    public function parse(Parser $parser): void
     {
-        $parser->match(Lexer::T_IDENTIFIER);
-        $parser->match(Lexer::T_OPEN_PARENTHESIS);
+        $parser->match(TokenType::T_IDENTIFIER);
+        $parser->match(TokenType::T_OPEN_PARENTHESIS);
 
-        $continueParsing = ! $parser->getLexer()->isNextToken(Lexer::T_CLOSE_PARENTHESIS);
+        $continueParsing = ! $parser->getLexer()->isNextToken(TokenType::T_CLOSE_PARENTHESIS);
 
         while ($continueParsing) {
-            if ($parser->getLexer()->isNextToken(Lexer::T_COMMA)) {
-                $parser->match(Lexer::T_COMMA);
+            if ($parser->getLexer()->isNextToken(TokenType::T_COMMA)) {
+                $parser->match(TokenType::T_COMMA);
                 continue;
             }
 
             $this->arguments[] = $parser->StringPrimary();
 
-            $continueParsing = ! $parser->getLexer()->isNextToken(Lexer::T_CLOSE_PARENTHESIS);
+            $continueParsing = ! $parser->getLexer()->isNextToken(TokenType::T_CLOSE_PARENTHESIS);
         }
 
-        $parser->match(Lexer::T_CLOSE_PARENTHESIS);
+        $parser->match(TokenType::T_CLOSE_PARENTHESIS);
     }
 }

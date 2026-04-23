@@ -2,7 +2,7 @@
 namespace Digbang\DoctrineExtensions\Functions\Postgresql;
 
 use Doctrine\ORM\Query\AST\Functions\FunctionNode;
-use Doctrine\ORM\Query\Lexer;
+use Doctrine\ORM\Query\TokenType;
 use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\Query\SqlWalker;
 
@@ -18,7 +18,7 @@ class EarthDistanceFunction extends FunctionNode
 	private $latitude2;
 	private $longitude2;
 
-	public function getSql(SqlWalker $sqlWalker)
+	public function getSql(SqlWalker $sqlWalker): string
 	{
 		return '((
 		        point(' . $this->longitude1->dispatch($sqlWalker) . ',' . $this->latitude1->dispatch($sqlWalker) . ') 
@@ -27,17 +27,17 @@ class EarthDistanceFunction extends FunctionNode
 		    ) * 1.609)::double precision';
 	}
 
-	public function parse(Parser $parser)
+	public function parse(Parser $parser): void
 	{
-		$parser->match(Lexer::T_IDENTIFIER);
-		$parser->match(Lexer::T_OPEN_PARENTHESIS);
+		$parser->match(TokenType::T_IDENTIFIER);
+		$parser->match(TokenType::T_OPEN_PARENTHESIS);
 		$this->latitude1 = $parser->ArithmeticExpression();
-		$parser->match(Lexer::T_COMMA);
+		$parser->match(TokenType::T_COMMA);
 		$this->longitude1 = $parser->ArithmeticExpression();
-		$parser->match(Lexer::T_COMMA);
+		$parser->match(TokenType::T_COMMA);
 		$this->latitude2 = $parser->ArithmeticExpression();
-		$parser->match(Lexer::T_COMMA);
+		$parser->match(TokenType::T_COMMA);
 		$this->longitude2 = $parser->ArithmeticExpression();
-		$parser->match(Lexer::T_CLOSE_PARENTHESIS);
+		$parser->match(TokenType::T_CLOSE_PARENTHESIS);
 	}
 }

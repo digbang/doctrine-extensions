@@ -2,7 +2,7 @@
 namespace Digbang\DoctrineExtensions\Functions\Postgresql;
 
 use Doctrine\ORM\Query\AST\Functions\FunctionNode;
-use Doctrine\ORM\Query\Lexer;
+use Doctrine\ORM\Query\TokenType;
 use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\Query\SqlWalker;
 
@@ -13,7 +13,7 @@ class FilterWhereFunction extends FunctionNode
     private $expresion;
     private $condition;
 
-    public function getSql(SqlWalker $sqlWalker)
+    public function getSql(SqlWalker $sqlWalker): string
     {
         return sprintf(
             '%s FILTER (WHERE %s)',
@@ -21,13 +21,13 @@ class FilterWhereFunction extends FunctionNode
             $sqlWalker->walkStringPrimary($this->condition));
     }
 
-    public function parse(Parser $parser)
+    public function parse(Parser $parser): void
     {
-        $parser->match(Lexer::T_IDENTIFIER);
-        $parser->match(Lexer::T_OPEN_PARENTHESIS);
+        $parser->match(TokenType::T_IDENTIFIER);
+        $parser->match(TokenType::T_OPEN_PARENTHESIS);
         $this->expresion = $parser->AggregateExpression();
-        $parser->match(Lexer::T_COMMA);
+        $parser->match(TokenType::T_COMMA);
         $this->condition = $parser->ConditionalExpression();
-        $parser->match(Lexer::T_CLOSE_PARENTHESIS);
+        $parser->match(TokenType::T_CLOSE_PARENTHESIS);
     }
 }
