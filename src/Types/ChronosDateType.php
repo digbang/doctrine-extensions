@@ -3,30 +3,18 @@
 namespace Digbang\DoctrineExtensions\Types;
 
 use Cake\Chronos\Date;
+use DateTimeImmutable;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Types\DateType;
+use Doctrine\DBAL\Types\DateImmutableType;
 
-class ChronosDateType extends DateType
+class ChronosDateType extends DateImmutableType
 {
     const CHRONOS_DATE = 'chronos_date';
 
-    public function getName()
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?DateTimeImmutable
     {
-        return static::CHRONOS_DATE;
-    }
-
-    public function convertToPHPValue($value, AbstractPlatform $platform)
-    {
-        if ($value === null) {
-            return null;
-        }
         $dateTime = parent::convertToPHPValue($value, $platform);
 
-        return Date::instance($dateTime);
-    }
-
-    public function requiresSQLCommentHint(AbstractPlatform $platform)
-    {
-        return true;
+        return $dateTime === null ? null : Date::instance($dateTime);
     }
 }
