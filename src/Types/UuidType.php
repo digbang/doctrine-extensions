@@ -28,32 +28,17 @@ use Ramsey\Uuid\Uuid;
  */
 class UuidType extends Type
 {
-    /**
-     * @var string
-     */
     const UUID = 'uuid';
 
-    /**
-     * {@inheritdoc}
-     *
-     * @param array                                     $fieldDeclaration
-     * @param \Doctrine\DBAL\Platforms\AbstractPlatform $platform
-     */
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getGuidTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getGuidTypeDeclarationSQL($column);
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @param string|null                               $value
-     * @param \Doctrine\DBAL\Platforms\AbstractPlatform $platform
-     */
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): mixed
     {
         if (empty($value)) {
-            return;
+            return null;
         }
 
         if ($value instanceof Uuid) {
@@ -69,16 +54,10 @@ class UuidType extends Type
         return $uuid;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @param Uuid|null                                 $value
-     * @param \Doctrine\DBAL\Platforms\AbstractPlatform $platform
-     */
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): mixed
     {
         if (empty($value)) {
-            return;
+            return null;
         }
 
         if ($value instanceof Uuid || Uuid::isValid($value)) {
@@ -86,27 +65,5 @@ class UuidType extends Type
         }
 
         throw ConversionException::conversionFailed($value, self::UUID);
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return self::UUID;
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @param \Doctrine\DBAL\Platforms\AbstractPlatform $platform
-     *
-     * @return bool
-     */
-    public function requiresSQLCommentHint(AbstractPlatform $platform)
-    {
-        return true;
     }
 }
