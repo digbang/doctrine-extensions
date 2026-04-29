@@ -24,7 +24,7 @@
         "mockery/mockery": "^1.0",
         "laravel-doctrine/orm": "^3.2",
         "laravel-doctrine/fluent": "^3.0",
-        "illuminate/support": "^10.0 || ^11.0",
+        "illuminate/support": "^10.0 || ^11.0 || ^12.0",
         "ramsey/uuid": "^4.1"
     },
     "autoload": {
